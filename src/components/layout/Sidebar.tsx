@@ -29,8 +29,8 @@ export function Sidebar() {
             <GraduationCap className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-foreground">FaceAttend</h1>
-            <p className="text-xs text-muted-foreground">Smart Attendance</p>
+            <h1 className="text-sm font-bold text-foreground leading-tight">ACET</h1>
+            <p className="text-xs text-muted-foreground">Attendance System</p>
           </div>
         </div>
 
@@ -58,8 +58,8 @@ export function Sidebar() {
 
         {/* Footer */}
         <div className="border-t border-border px-6 py-4">
-          <p className="text-xs text-muted-foreground">
-            © 2024 FaceAttend System
+          <p className="text-xs text-muted-foreground text-center leading-tight">
+            © 2024 Audisankara College of Engineering and Technology
           </p>
         </div>
       </div>

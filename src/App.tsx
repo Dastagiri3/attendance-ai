@@ -8,6 +8,7 @@ import MarkAttendance from "./pages/MarkAttendance";
 import Students from "./pages/Students";
 import RegisterStudent from "./pages/RegisterStudent";
 import AttendanceRecords from "./pages/AttendanceRecords";
+import Documentation from "./pages/Documentation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/students" element={<Students />} />
           <Route path="/register" element={<RegisterStudent />} />
           <Route path="/records" element={<AttendanceRecords />} />
+          <Route path="/documentation" element={<Documentation />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

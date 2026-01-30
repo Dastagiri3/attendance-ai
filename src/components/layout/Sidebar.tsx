@@ -5,9 +5,10 @@ import {
   UserPlus, 
   Camera, 
   ClipboardList,
-  GraduationCap
+  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import logo from '@/assets/audisankara-logo.png';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
@@ -15,6 +16,7 @@ const navItems = [
   { icon: Users, label: 'Students', path: '/students' },
   { icon: UserPlus, label: 'Register Student', path: '/register' },
   { icon: ClipboardList, label: 'Attendance Records', path: '/records' },
+  { icon: FileText, label: 'Documentation', path: '/documentation' },
 ];
 
 export function Sidebar() {
@@ -25,9 +27,7 @@ export function Sidebar() {
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="flex items-center gap-3 px-6 py-6 border-b border-border">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-            <GraduationCap className="h-6 w-6 text-primary-foreground" />
-          </div>
+          <img src={logo} alt="ACET Logo" className="h-12 w-auto" />
           <div>
             <h1 className="text-sm font-bold text-foreground leading-tight">ACET</h1>
             <p className="text-xs text-muted-foreground">Attendance System</p>

@@ -346,7 +346,7 @@ bun run build
 
 **Institution:** Audisankara College of Engineering and Technology
 
-**Department:** Computer Science and Engineering
+**Department:** Electronics and communication Engineering
 
 **Project Type:** Academic Project / Final Year Project
 
@@ -375,6 +375,6 @@ This project is developed for educational purposes at Audisankara College of Eng
 
 ---
 
-*Last Updated: January 2024*
+*Last Updated: January 2026*
 
 *Version: 1.0.0*

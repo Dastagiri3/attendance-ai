@@ -4,6 +4,7 @@
 ### Smart Attendance Management System
 
 Project Live Demo Link: https://attendance-ai-sauu.vercel.app
+
 ---
 
 ## 📋 Project Overview

@@ -319,10 +319,212 @@ bun run build
 
 ---
 
+## 🌐 IoT Integration Roadmap
+
+> **Project Classification:** IoT-Ready Smart Attendance System
+
+This project is designed as an **IoT-Ready** solution that can be extended with hardware components for full IoT functionality.
+
+### Current Architecture (Web Application + Computer Vision)
+
+| Component | Technology | Status |
+|-----------|------------|--------|
+| Face Capture | Browser WebRTC API | ✅ Implemented |
+| Data Storage | localStorage | ✅ Implemented |
+| User Interface | React + Tailwind | ✅ Implemented |
+| Face Detection | Simulated | ✅ Demo Ready |
+
+### IoT Enhancement Phases
+
+#### Phase 1 - Cloud Connectivity (IoT Foundation)
+- [ ] Connect to Lovable Cloud database for real-time sync
+- [ ] Enable multi-device data sharing
+- [ ] Add user authentication
+- [ ] REST API for IoT device communication
+
+#### Phase 2 - Raspberry Pi Integration
+- [ ] Dedicated Raspberry Pi attendance kiosk
+- [ ] Pi Camera Module for face capture
+- [ ] Python scripts for edge processing
+- [ ] GPIO integration for LED/buzzer feedback
+
+#### Phase 3 - Sensor Integration
+- [ ] Motion/IR sensors to trigger camera
+- [ ] RFID reader for dual verification
+- [ ] Temperature sensor for health screening
+- [ ] Proximity sensors for queue management
+
+#### Phase 4 - Advanced IoT Features
+- [ ] MQTT protocol for device communication
+- [ ] Edge computing with TensorFlow Lite
+- [ ] Multiple kiosk synchronization
+- [ ] Real-time dashboard with WebSocket
+
+---
+
+## 🍓 Raspberry Pi Hardware Setup
+
+### Required Components
+
+| Component | Model | Purpose | Approx. Cost |
+|-----------|-------|---------|--------------|
+| Raspberry Pi | 4 Model B (4GB) | Main controller | ₹4,500 |
+| Camera Module | Pi Camera V2 / USB Webcam | Face capture | ₹1,200 |
+| MicroSD Card | 32GB Class 10 | OS & Storage | ₹500 |
+| Power Supply | 5V 3A USB-C | Power | ₹400 |
+| Display | 7" Touchscreen / HDMI Monitor | Interface | ₹3,000 |
+| LED Indicators | Red/Green LEDs | Status feedback | ₹50 |
+| Buzzer | Piezo Buzzer | Audio feedback | ₹30 |
+| Case | Official Pi Case | Protection | ₹500 |
+
+### Circuit Diagram
+
+```
+Raspberry Pi 4 GPIO Pinout for Attendance System
+================================================
+
+                    +-----+
+       3.3V Power --|  1  |-- 5V Power
+       GPIO 2 SDA --|  2  |-- 5V Power
+       GPIO 3 SCL --|  3  |-- Ground
+          GPIO 4  --|  4  |-- GPIO 14 TXD
+            Ground--|  5  |-- GPIO 15 RXD
+          GPIO 17 --|  6  |-- GPIO 18 (PWM)
+          GPIO 27 --|  7  |-- Ground
+          GPIO 22 --|  8  |-- GPIO 23
+       3.3V Power --|  9  |-- GPIO 24
+         GPIO 10  --| 10  |-- Ground
+          GPIO 9  --| 11  |-- GPIO 25
+         GPIO 11  --| 12  |-- GPIO 8
+            Ground--| 13  |-- GPIO 7
+                    +-----+
+
+Connections:
+- GPIO 17 → Green LED (Success) + 220Ω Resistor → Ground
+- GPIO 27 → Red LED (Error) + 220Ω Resistor → Ground  
+- GPIO 22 → Buzzer Positive → Ground
+- Pi Camera → CSI Port (Ribbon Cable)
+- Display → HDMI / DSI Port
+```
+
+### Python Script for Raspberry Pi
+
+```python
+# attendance_kiosk.py - Raspberry Pi Attendance System
+# Place this script on your Raspberry Pi
+
+import cv2
+import requests
+import RPi.GPIO as GPIO
+import time
+from datetime import datetime
+
+# GPIO Setup
+GREEN_LED = 17
+RED_LED = 27
+BUZZER = 22
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(GREEN_LED, GPIO.OUT)
+GPIO.setup(RED_LED, GPIO.OUT)
+GPIO.setup(BUZZER, GPIO.OUT)
+
+# API Configuration (Update with your deployed URL)
+API_URL = "https://your-app-url.lovable.app/api"
+
+def capture_face():
+    """Capture image from Pi Camera"""
+    camera = cv2.VideoCapture(0)
+    ret, frame = camera.read()
+    camera.release()
+    if ret:
+        _, buffer = cv2.imencode('.jpg', frame)
+        return buffer.tobytes()
+    return None
+
+def success_feedback():
+    """Green LED + Short beep"""
+    GPIO.output(GREEN_LED, GPIO.HIGH)
+    GPIO.output(BUZZER, GPIO.HIGH)
+    time.sleep(0.2)
+    GPIO.output(BUZZER, GPIO.LOW)
+    time.sleep(0.8)
+    GPIO.output(GREEN_LED, GPIO.LOW)
+
+def error_feedback():
+    """Red LED + Long beep"""
+    GPIO.output(RED_LED, GPIO.HIGH)
+    GPIO.output(BUZZER, GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(BUZZER, GPIO.LOW)
+    GPIO.output(RED_LED, GPIO.LOW)
+
+def mark_attendance(student_id):
+    """Send attendance to cloud API"""
+    try:
+        response = requests.post(f"{API_URL}/attendance", json={
+            "studentId": student_id,
+            "timestamp": datetime.now().isoformat(),
+            "device": "raspberry_pi_kiosk_1"
+        })
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
+def main():
+    print("ACET Attendance Kiosk Starting...")
+    while True:
+        # Capture and process face
+        image = capture_face()
+        if image:
+            # Send to face recognition API
+            # On success: success_feedback()
+            # On failure: error_feedback()
+            pass
+        time.sleep(1)
+
+if __name__ == "__main__":
+    try:
+        main()
+    finally:
+        GPIO.cleanup()
+```
+
+### Raspberry Pi Setup Steps
+
+1. **Flash Raspberry Pi OS**
+   ```bash
+   # Download Raspberry Pi Imager
+   # Flash Raspberry Pi OS (64-bit) to SD card
+   ```
+
+2. **Enable Camera & SSH**
+   ```bash
+   sudo raspi-config
+   # Interface Options → Camera → Enable
+   # Interface Options → SSH → Enable
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   sudo apt install python3-opencv python3-pip -y
+   pip3 install requests RPi.GPIO
+   ```
+
+4. **Auto-start on Boot**
+   ```bash
+   # Add to /etc/rc.local before 'exit 0'
+   python3 /home/pi/attendance_kiosk.py &
+   ```
+
+---
+
 ## 🔮 Future Enhancements
 
 ### Phase 1 - Backend Integration
-- [ ] Connect to cloud database (Lovable Cloud/Supabase)
+- [ ] Connect to cloud database (Lovable Cloud)
 - [ ] User authentication and authorization
 - [ ] Role-based access control (Admin, Faculty, Student)
 
@@ -337,10 +539,10 @@ bun run build
 - [ ] Automated report generation
 - [ ] Email notifications for low attendance
 
-### Phase 4 - Mobile Support
+### Phase 4 - Mobile & PWA Support
 - [ ] Progressive Web App (PWA) support
 - [ ] Mobile-responsive design optimization
-- [ ] Native mobile app development
+- [ ] Offline attendance sync
 
 ---
 
